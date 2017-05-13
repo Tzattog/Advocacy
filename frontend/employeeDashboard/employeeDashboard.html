@@ -1,0 +1,29 @@
+<div class="container admin-dashboard">
+  <div class="row col-xs-3 col-sm-3 col-md-3 col-lg-3">
+    <div class="btn-group-vertical" role="group">
+      <div class="btn-group" role="group">
+        <button type="button" class="btn"
+            ng-class="{'btn-default': viewedTab != 'profile', 'btn-primary': viewedTab == 'profile'}"
+            ng-click="viewTab('profile')">Profile</button>
+      </div>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn"
+            ng-class="{'btn-default': viewedTab != 'assignments', 'btn-primary': viewedTab == 'assignments'}"
+            ng-click="viewTab('assignments')">Assignments</button>
+      </div>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn"
+            ng-class="{'btn-default': viewedTab != 'addProcedure', 'btn-primary': viewedTab == 'addProcedure'}"
+            ng-click="viewTab('addProcedure')">Add procedure</button>
+      </div>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn"
+            ng-class="{'btn-default': viewedTab != 'changePersonalInfo', 'btn-primary': viewedTab == 'changePersonalInfo'}"
+            ng-click="viewTab('changePersonalInfo')">Change personal info</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 row row-content">
+    <div ng-include="currentTab(viewedTab)"></div>
+  </div>
+</div>

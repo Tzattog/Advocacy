@@ -1,0 +1,37 @@
+<div class="panel-group" id="assignment-accordion">
+  <div class="panel panel-default" ng-repeat="assignment in assignmentList track by $index">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#assignment-accordion" href data-target="#assignment{{$index}}" ng-click="getAssignmentProcedures(assignment)">{{assignment.name}}</a>
+      </h4>
+    </div>
+    <div id="assignment{{$index}}" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div>
+          <p>Details: {{assignment.details}}</p>
+          <p>Status: {{assignment.status}}</p>
+          <p>Start date: {{assignment.startDate | date}}</p>
+          <p ng-if="assignment.finishDate">Finish date: {{assignment.finishDate | date}}</p>
+          <p>Price (if successful): {{assignment.price | currency}}</p>
+        </div>
+        <div ng-if="assignment.procedures.length > 0" class="col-md-12">
+          <h4>Procedures</h4>
+          <table class="table">
+            <tr>
+              <th>Details</th>
+              <th>Date</th>
+              <th>Employee</th>
+              <th>Price</th>
+            </tr>
+            <tr ng-repeat="procedure in assignment.procedures">
+              <td>{{procedure.details}}</td>
+              <td>{{procedure.date | date}}</td>
+              <td>{{procedure.employee}}</td>
+              <td>{{procedure.price | currency}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

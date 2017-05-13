@@ -1,0 +1,35 @@
+<div>
+  <form>
+  <div class="form-group">
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" ng-model="newAssignment.name">
+  </div>
+  <div class="form-group">
+    <label for="details">Details</label>
+    <input type="text" class="form-control" id="details" ng-model="newAssignment.details">
+  </div>
+  <div class="form-group">
+    <label for="price">Price</label>
+    <input type="text" class="form-control" id="price" ng-model="newAssignment.price">
+  </div>
+  <div class="form-group">
+    <label for="client">Client</label>
+    <ui-select ng-model="newAssignment.id" theme="bootstrap" ng-disabled="ctrl.disabled" close-on-select="true" title="Select a client">
+      <ui-select-match placeholder="Select a client">{{$select.selected.firstname}} {{$select.selected.lastname}}</ui-select-match>
+      <ui-select-choices repeat="client.id as client in clientList | filter:$select.search">
+        {{client.firstname}} {{client.lastname}}
+      </ui-select-choices>
+    </ui-select>
+  </div>
+  <div class="form-group">
+    <label for="client">Employees</label>
+    <ui-select multiple ng-model="newAssignment.employees" theme="bootstrap" ng-disabled="ctrl.disabled" close-on-select="false" title="Select employees">
+      <ui-select-match placeholder="Select employees">{{$item.firstname}} {{$item.lastname}}</ui-select-match>
+      <ui-select-choices repeat="employee.id as employee in employeeList | filter:$select.search">
+        {{employee.firstname}} {{employee.lastname}}
+      </ui-select-choices>
+    </ui-select>
+  </div>
+  <button class="btn btn-primary pull-right" ng-click="createAssignment()">Create assignment</button>
+</form>
+</div>

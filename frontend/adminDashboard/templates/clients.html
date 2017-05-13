@@ -1,0 +1,36 @@
+<div class="panel-group" id="client-accordion">
+    <div class="panel panel-default" ng-repeat="client in clientList track by $index">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#client-accordion" href data-target="#client{{$index}}" ng-click="getClientAssignmentList(client)">{{client.firstname}} {{client.lastname}}</a>
+        </h4>
+      </div>
+      <div id="client{{$index}}" class="panel-collapse collapse">
+        <div class="panel-body">
+          <p>Email: {{client.email}}</p>
+          <p>Address: {{client.address}}</p>
+          <p>Phone number: {{client.phone}}</p>
+          <p>Birthday: {{client.birthday | date}}</p>
+          <h4 ng-if="client.assignmentList.length > 0">Assignments</h4>
+          <table class="table" ng-if="client.assignmentList.length > 0">
+            <tr>
+              <th>Name</th>
+              <th>Start date</th>
+              <th>Finish date</th>
+              <th>Status</th>
+              <th>Details</th>
+              <th>Price</th>
+            </tr>
+            <tr ng-repeat="assignment in client.assignmentList">
+              <td>{{assignment.name}}</td>
+              <td>{{assignment.startDate | date}}</td>
+              <td>{{assignment.finishDate | date}}</td>
+              <td>{{assignment.status}}</td>
+              <td>{{assignment.details}}</td>
+              <td>{{assignment.price | currency}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,22 @@
+<div>
+  <form>
+    <div class="form-group">
+      <label for="assignment">Assignment</label>
+      <ui-select ng-model="newProcedure.id" theme="bootstrap" ng-disabled="ctrl.disabled" close-on-select="true" title="Select an assignment">
+        <ui-select-match placeholder="Select an assignment">{{$select.selected.name}}</ui-select-match>
+        <ui-select-choices repeat="assignment.id as assignment in assignmentList | filter:$select.search">
+          {{assignment.name}}
+        </ui-select-choices>
+      </ui-select>
+    </div>
+    <div class="form-group">
+      <label for="details">Details</label>
+      <input type="text" class="form-control" id="details" ng-model="newProcedure.details">
+    </div>
+    <div class="form-group">
+      <label for="price">Price</label>
+      <input type="text" class="form-control" id="price" ng-model="newProcedure.price">
+    </div>
+    <button class="btn btn-primary pull-right" ng-click="addProcedure()">Add procedure</button>
+  </form>
+</div>

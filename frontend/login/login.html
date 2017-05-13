@@ -1,0 +1,28 @@
+<div class="container login">
+  <div class="btn-group btn-group-justified" role="group">
+    <div class="btn-group" role="group">
+      <button type="button" class="btn"
+          ng-class="{'btn-default': selectedRole != 'client', 'btn-primary': selectedRole == 'client'}"
+          ng-click="selectRole('client')">Client</button>
+    </div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn"
+          ng-class="{'btn-default': selectedRole != 'employee', 'btn-primary': selectedRole == 'employee'}"
+          ng-click="selectRole('employee')">Employee</button>
+    </div>
+    <div class="btn-group" role="group">
+      <button type="button" class="btn"
+          ng-class="{'btn-default': selectedRole != 'admin', 'btn-primary': selectedRole == 'admin'}"
+          ng-click="selectRole('admin')">Admin</button>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="email">Email address</label>
+    <input type="email" class="form-control" id="email" placeholder="Email" ng-model="email">
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" id="password" placeholder="Password" ng-model="password">
+  </div>
+  <button type="submit" class="btn btn-success btn-block pull-right" ng-click="login()">Login</button>
+</div>

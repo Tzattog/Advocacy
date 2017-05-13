@@ -1,0 +1,36 @@
+<div class="panel-group" id="employee-accordion">
+    <div class="panel panel-default" ng-repeat="employee in employeeList track by $index">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#employee-accordion" href data-target="#employee{{$index}}" ng-click="getEmployeeAssignmentList(employee)">{{employee.firstname}} {{employee.lastname}}</a>
+        </h4>
+      </div>
+      <div id="employee{{$index}}" class="panel-collapse collapse">
+        <div class="panel-body">
+          <p>Email: {{employee.email}}</p>
+          <p>Address: {{employee.address}}</p>
+          <p>Phone number: {{employee.phone}}</p>
+          <p>Birthday: {{employee.birthday | date}}</p>
+          <h4 ng-if="employee.assignmentList.length > 0">Assignments</h4>
+          <table class="table" ng-if="employee.assignmentList.length > 0">
+            <tr>
+              <th>Name</th>
+              <th>Start date</th>
+              <th>Finish date</th>
+              <th>Status</th>
+              <th>Details</th>
+              <th>Price</th>
+            </tr>
+            <tr ng-repeat="assignment in employee.assignmentList">
+              <td>{{assignment.name}}</td>
+              <td>{{assignment.startDate | date}}</td>
+              <td>{{assignment.finishDate | date}}</td>
+              <td>{{assignment.status}}</td>
+              <td>{{assignment.details}}</td>
+              <td>{{assignment.price | currency}}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>

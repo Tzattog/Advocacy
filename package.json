@@ -1,0 +1,31 @@
+{
+  "name": "advocacy",
+  "version": "1.0.0",
+  "description": "advocacy TRPO project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^2.4.0",
+    "body-parser": "^1.15.2",
+    "compression": "^1.6.2",
+    "connect-mysql": "^2.1.1",
+    "cookie-parser": "^1.4.3",
+    "csv-stringify": "^1.0.4",
+    "express": "^4.14.0",
+    "express-session": "^1.14.2",
+    "express-validator": "^3.0.0",
+    "mysql": "^2.12.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "validator": "^6.2.0",
+    "winston": "^2.3.0"
+  },
+  "devDependencies": {
+    "bower-npm-resolver": "^0.7.0"
+  }
+}

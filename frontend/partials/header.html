@@ -1,0 +1,13 @@
+<nav class="navbar navbar-default navbar-fixed-top header" ng-app="advocacy.logout">
+  <div class="container" ng-controller="logoutCtrl">
+    <ul class="nav navbar-nav navbar-left">
+      <li><a href="/">Home</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="/register" ng-if="!isLoggedIn">Sign up</a></li>
+      <li><a href="/login" ng-if="!isLoggedIn">Sign in</a></li>
+      <li><a href="" ng-if="isLoggedIn" ng-click=goToDashboard()>Dashboard</a></li>
+      <li><a href="" ng-if="isLoggedIn" ng-click="logout()">Sign out</a></li>
+    </ul>
+  </div>
+</nav>
