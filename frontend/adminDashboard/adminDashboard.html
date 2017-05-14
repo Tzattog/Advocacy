@@ -26,6 +26,11 @@
             ng-class="{'btn-default': viewedTab != 'createAssignment', 'btn-primary': viewedTab == 'createAssignment'}"
             ng-click="viewTab('createAssignment')">Create assignment</button>
       </div>
+      <div class="btn-group" role="group">
+        <button type="button" class="btn"
+            ng-class="{'btn-default': viewedTab != 'database', 'btn-primary': viewedTab == 'database'}"
+            ng-click="viewTab('database')">Database</button>
+      </div>
     </div>
   </div>
   <div class="col-xs-9 col-sm-9 col-md-9 col-lg-9 row row-content">

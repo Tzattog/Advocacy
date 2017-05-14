@@ -1,3 +1,7 @@
+var dbDump = require('mysqldump');
+var fs = require('fs');
+var schedule = require('node-schedule');
+
 var db = require('./libs/dbConnection');
 var logger = require('./libs/logger');
 var config = require('./libs/config');
@@ -300,3 +304,37 @@ exports.getAssignmentProcedures = function(req, res, next){
         }
     });
 };
+
+//DATABASE
+
+exports.createAndDownloadDump = function (req, res, next) {
+    var fileName = './dump/' + new Date().toISOString() + '.sql';
+    dbDump({
+        host: 'localhost',
+        user: 'root',
+        password: '!@#123QWEasdzxc',
+        database: 'advocacy',
+        dest: fileName // destination file
+    }, function (err) {
+        if (err) {
+            return next(err);
+        }
+        res.download(fileName);
+    });
+};
+
+schedule.scheduleJob('0 0 * * 7', function () {
+    var fileName = './dump/' + new Date().toISOString().split('T')[0] + '.sql';
+    dbDump({
+        host: 'localhost',
+        user: 'root',
+        password: '!@#123QWEasdzxc',
+        database: 'advocacy',
+        dest: fileName // destination file
+    }, function (err) {
+        if (err) {
+            return next(err);
+        }
+        logger.debug('Scheduled DB dump successful!');
+    });
+});

@@ -125,6 +125,10 @@ angular.module('advocacy.adminDashboard', ['ngRoute'])
                 window.location = '/api/admin/download-report/' + id;
             };
 
+            $scope.downloadDump = function () {
+                window.location = '/api/admin/download-dump';
+            };
+
             $scope.viewTab = function (tab) {
                 switch (tab) {
                     case 'clients':

@@ -70,6 +70,8 @@ adminRouter.get('/get-assignment-procedures/:id',
 adminRouter.get('/download-report/:id',
     validation.validateParamsId,
     report.generateReport);
+adminRouter.get('/download-dump',
+    admin.createAndDownloadDump);
 
 var userRouter = express.Router();
 userRouter.get('/current-user',
