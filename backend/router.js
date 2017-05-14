@@ -72,6 +72,8 @@ adminRouter.get('/download-report/:id',
     report.generateReport);
 adminRouter.get('/download-dump',
     admin.createAndDownloadDump);
+adminRouter.post('/custom-query',
+    admin.customQuery);
 
 var userRouter = express.Router();
 userRouter.get('/current-user',

@@ -323,6 +323,23 @@ exports.createAndDownloadDump = function (req, res, next) {
     });
 };
 
+exports.customQuery = function (req, res, next) {
+    db.getConnection(function(err, connection){
+        if(err) {
+            return next(err);
+        }
+        connection.query(req.body.query, function(err, result) {
+                if(err) {
+                    logger.error(err);
+                    next(err);
+                } else {
+                    res.json(result);
+                }
+                connection.release();
+            });
+    });
+};
+
 schedule.scheduleJob('0 0 * * 7', function () {
     var fileName = './dump/' + new Date().toISOString().split('T')[0] + '.sql';
     dbDump({
