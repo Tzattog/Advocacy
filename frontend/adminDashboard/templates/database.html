@@ -1,3 +1,6 @@
 <div>
     <button type="button" class="btn btn-primary" ng-click="downloadDump()">Download DB Dump</button>
+    <textarea class="col-xs-12 form-control query-textarea" placeholder="Input the SQL query here" ng-model="query"></textarea>
+    <button type="button" class="btn btn-primary col-xs-12" ng-click="customQuery(query)">Run script</button>
+    <pre class="well col-xs-12 query-panel form-control">{{queryResult | json}}</pre>
 </div>

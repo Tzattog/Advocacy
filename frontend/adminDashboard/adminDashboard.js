@@ -129,6 +129,17 @@ angular.module('advocacy.adminDashboard', ['ngRoute'])
                 window.location = '/api/admin/download-dump';
             };
 
+            $scope.queryResult = 'Query result will be displayed here';
+
+            $scope.customQuery = function (query) {
+                adminDashboardService.runCustomQuery(query).then(function (data) {
+                    $scope.queryResult = data.data;
+                }, function (error) {
+                    Notification.error(error);
+                    console.log(error);
+                });
+            };
+
             $scope.viewTab = function (tab) {
                 switch (tab) {
                     case 'clients':
@@ -186,6 +197,9 @@ angular.module('advocacy.adminDashboard', ['ngRoute'])
             },
             getAssignmentProcedures: function (id) {
                 return $http.get('/api/admin/get-assignment-procedures/' + id);
+            },
+            runCustomQuery: function (query) {
+                return $http.post('/api/admin/custom-query', { query: query });
             }
         };
     }]);
