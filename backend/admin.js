@@ -108,61 +108,20 @@ exports.createEmployee = function(req, res, next){
         if(err) {
             return next(err);
         }
-        connection.beginTransaction(function () {
-            if (err) {
-                connection.release();
-                return next(err);
-            }
-            connection.query('INSERT INTO emails SET ?', { email: req.body.email }, function (err, email) {
+        var body = req.body;
+        connection.query('SELECT * FROM \'CreateEmployee\'(?, ?, ?, ?, ?, ?, ?)',
+            [body.email, body.password, body.firstname, body.lastname, body.address, body.phone, body.birthday],
+            function (err, result) {
                 if (err) {
-                    return handleTransactionError(connection, err);
+                    logger.error(err);
+                    next(err);
+                } else {
+                    logger.info('Employee was created successfully, employee id ', result);
+                    res.end();
                 }
-                connection.query('INSERT INTO names SET ?', { firstname: req.body.firstname, lastname: req.body.lastname }, function (err, name) {
-                    if (err) {
-                        return handleTransactionError(connection, err);
-                    }
-                    connection.query('INSERT INTO addresses SET ?', { address: req.body.address }, function (err, address) {
-                        if (err) {
-                            return handleTransactionError(connection, err);
-                        }
-                        connection.query('INSERT INTO phones SET ?', { phone: req.body.phone }, function (err, phone) {
-                            if (err) {
-                                return handleTransactionError(connection, err);
-                            }
-                            var employee = {
-                                password: req.body.password,
-                                birthday: req.body.birthday,
-                                emailId: email.insertId,
-                                nameId: name.insertId,
-                                addressId: address.insertId,
-                                phoneId: phone.insertId
-                            };
-                            connection.query('INSERT INTO employees SET ?', employee, function (err, result) {
-                                if (err) {
-                                    return handleTransactionError(connection, {error: 'Cannot create employee'});
-                                } else {
-                                    connection.commit(function () {
-                                        logger.info('Employee successfully created, ', result);
-                                        res.end();
-                                        connection.release();
-                                    });
-                                }
-                            });
-                        });
-                    });
-                });
+                connection.release();
             });
-
-        });
     });
-
-    function handleTransactionError(connection, err) {
-        logger.error(err);
-        connection.rollback(function () {
-            connection.release();
-        });
-        return next(err);
-    }
 };
 
 exports.deleteEmployee = function(req, res, next){

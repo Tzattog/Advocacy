@@ -52,44 +52,20 @@ exports.register = function(req, res, next){
         if(err) {
             return next(err);
         }
-        connection.beginTransaction(function () {
-            if (err) {
-                connection.release();
-                return next(err);
-            }
-            connection.query('INSERT INTO emails SET ?', { email: req.body.email.toLowerCase() }, function (err, email) {
+        var body = req.body;
+        connection.query('SELECT * FROM \'CreateClient\'(?, ?, ?, ?, ?, ?, ?)',
+        [body.email, body.password, body.firstname, body.lastname, body.address, body.phone, body.birthday],
+            function (err, result) {
                 if (err) {
-                    return handleTransactionError(connection, {message: 'Cannot create an account, please try again later'});
+                    logger.error(err);
+                    next(err);
+                } else {
+                    logger.info('User was created successfully, client id ', result);
+                    res.end();
                 }
-                connection.query('INSERT INTO names SET ?', { firstname: req.body.firstname, lastname: req.body.lastname }, function (err, name) {
-                    if (err) {
-                        return handleTransactionError(connection, {message: 'Cannot create an account, please try again later'});
-                    }
-                    var client = { emailId: email.insertId, nameId: name.insertId, password: req.body.password };
-                    connection.query('INSERT INTO clients SET ?', client, function (err, result) {
-                        if (err) {
-                            return handleTransactionError(connection, {message: 'Cannot create an account, please try again later'});
-                        } else {
-                            connection.commit(function () {
-                                logger.info('User was created successfully', result);
-                                res.end();
-                                connection.release();
-                            });
-                        }
-                    });
-                });
+                connection.release();
             });
-
-        });
     });
-
-    function handleTransactionError(connection, err) {
-        logger.error(err);
-        connection.rollback(function () {
-            connection.release();
-        });
-        return next(err);
-    }
 };
 
 exports.changePersonalInfo = function(req, res, next){
