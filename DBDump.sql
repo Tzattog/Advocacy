@@ -18,6 +18,31 @@ USE `advocacy`;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `addresses`
+--
+
+DROP TABLE IF EXISTS `addresses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `addresses` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `address` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `addresses`
+--
+
+LOCK TABLES `addresses` WRITE;
+/*!40000 ALTER TABLE `addresses` DISABLE KEYS */;
+INSERT INTO `addresses` VALUES (1,'Pushkina 36-105'),(2,'Some other address'),(3,'twitch.tv'),(4,'qwerty'),(5,'Odoevskogo 115a'),(6,'twitch.tv/pohx'),(8,'test'),(9,'test');
+/*!40000 ALTER TABLE `addresses` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `admin`
 --
 
@@ -52,14 +77,18 @@ DROP TABLE IF EXISTS `assignments`;
 CREATE TABLE `assignments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `clientId` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `details` text,
-  `status` enum('in progress','successful','failed') NOT NULL DEFAULT 'in progress',
+  `statusId` int(11) NOT NULL DEFAULT '1',
   `startDate` date DEFAULT NULL,
   `finishDate` date DEFAULT NULL,
+  `price` double NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fkClientID_idx` (`clientId`),
-  CONSTRAINT `fkClientID` FOREIGN KEY (`clientId`) REFERENCES `clients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+  KEY `fkStatusType_idx` (`statusId`),
+  CONSTRAINT `fkClientID` FOREIGN KEY (`clientId`) REFERENCES `clients` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fkStatusType` FOREIGN KEY (`statusId`) REFERENCES `status_type` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +97,7 @@ CREATE TABLE `assignments` (
 
 LOCK TABLES `assignments` WRITE;
 /*!40000 ALTER TABLE `assignments` DISABLE KEYS */;
-INSERT INTO `assignments` VALUES (1,1,'description','in progress',NULL,NULL),(2,1,'Blabla','in progress','2016-12-09',NULL);
+INSERT INTO `assignments` VALUES (1,1,'One','description',2,NULL,'2016-12-11',100),(2,1,'Two','Blabla',2,'2016-12-09','2016-12-11',100),(3,1,'Very important task','Something about a project',1,'2016-12-11','2016-12-12',300);
 /*!40000 ALTER TABLE `assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,16 +110,22 @@ DROP TABLE IF EXISTS `clients`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `clients` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `firstname` varchar(45) DEFAULT NULL,
-  `lastname` varchar(45) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `phonenum` varchar(45) DEFAULT NULL,
   `birthday` date DEFAULT NULL,
+  `emailId` int(11) NOT NULL,
+  `nameId` int(11) DEFAULT NULL,
+  `addressId` int(11) DEFAULT NULL,
+  `phoneId` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email_UNIQUE` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `emailId_UNIQUE` (`emailId`),
+  KEY `phoneFkClients_idx` (`phoneId`),
+  KEY `nameFkClients_idx` (`nameId`),
+  KEY `addressFkClients_idx` (`addressId`),
+  CONSTRAINT `clientAddressFk` FOREIGN KEY (`addressId`) REFERENCES `addresses` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `clientEmailFk` FOREIGN KEY (`emailId`) REFERENCES `emails` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `clientNameFk` FOREIGN KEY (`nameId`) REFERENCES `names` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `clientPhoneFk` FOREIGN KEY (`phoneId`) REFERENCES `phones` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -99,8 +134,33 @@ CREATE TABLE `clients` (
 
 LOCK TABLES `clients` WRITE;
 /*!40000 ALTER TABLE `clients` DISABLE KEYS */;
-INSERT INTO `clients` VALUES (1,'test@test.test','121212',NULL,NULL,NULL,NULL,NULL);
+INSERT INTO `clients` VALUES (1,'123123','1996-02-22',1,1,1,1),(4,'kappa123','1992-01-01',7,5,6,6),(5,'test','2017-05-16',9,7,8,8);
 /*!40000 ALTER TABLE `clients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `emails`
+--
+
+DROP TABLE IF EXISTS `emails`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `emails` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `emails`
+--
+
+LOCK TABLES `emails` WRITE;
+/*!40000 ALTER TABLE `emails` DISABLE KEYS */;
+INSERT INTO `emails` VALUES (1,'test@test.test'),(2,'qwe@qwe.qwe'),(3,'kappa@keepo.com'),(4,'asd@asd.asd'),(5,'t3g1@mifort.org'),(7,'pohx@kappa.com'),(9,'test'),(10,'test');
+/*!40000 ALTER TABLE `emails` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -112,16 +172,23 @@ DROP TABLE IF EXISTS `employees`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `employees` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `firstname` varchar(45) DEFAULT NULL,
-  `lastname` varchar(45) DEFAULT NULL,
-  `address` varchar(255) DEFAULT NULL,
-  `phonenum` varchar(45) DEFAULT NULL,
   `birthday` date DEFAULT NULL,
   `deleted` tinyint(4) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+  `emailId` int(11) NOT NULL,
+  `nameId` int(11) DEFAULT NULL,
+  `addressId` int(11) DEFAULT NULL,
+  `phoneId` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `emailId_UNIQUE` (`emailId`),
+  KEY `employeeNameFk_idx` (`nameId`),
+  KEY `employeeAddressFk_idx` (`addressId`),
+  KEY `employeePhoneFk_idx` (`phoneId`),
+  CONSTRAINT `employeeAddressFk` FOREIGN KEY (`addressId`) REFERENCES `addresses` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `employeeEmailFk` FOREIGN KEY (`emailId`) REFERENCES `emails` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `employeeNameFk` FOREIGN KEY (`nameId`) REFERENCES `names` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `employeePhoneFk` FOREIGN KEY (`phoneId`) REFERENCES `phones` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,7 +197,7 @@ CREATE TABLE `employees` (
 
 LOCK TABLES `employees` WRITE;
 /*!40000 ALTER TABLE `employees` DISABLE KEYS */;
-INSERT INTO `employees` VALUES (1,'qwe@qwe.qwe','qweqwe','Nick','Berilov','Some address','+375293065135','1996-02-22',0);
+INSERT INTO `employees` VALUES (1,'qweqwe','1234-01-23',0,2,1,2,4),(4,'123123','1991-01-01',0,3,2,3,2),(5,'asdasd','1996-02-22',0,4,3,4,3),(6,'test','2017-05-16',0,10,8,9,9);
 /*!40000 ALTER TABLE `employees` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -150,7 +217,7 @@ CREATE TABLE `employeestoassignments` (
   KEY `fkAssignmentID_idx` (`assignmentId`),
   CONSTRAINT `fkAssignmentID` FOREIGN KEY (`assignmentId`) REFERENCES `assignments` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `skEmployeeID` FOREIGN KEY (`employeeId`) REFERENCES `employees` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,8 +226,59 @@ CREATE TABLE `employeestoassignments` (
 
 LOCK TABLES `employeestoassignments` WRITE;
 /*!40000 ALTER TABLE `employeestoassignments` DISABLE KEYS */;
-INSERT INTO `employeestoassignments` VALUES (1,1,2);
+INSERT INTO `employeestoassignments` VALUES (1,1,2),(2,1,3),(3,4,3);
 /*!40000 ALTER TABLE `employeestoassignments` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `names`
+--
+
+DROP TABLE IF EXISTS `names`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `names` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `firstname` varchar(45) NOT NULL,
+  `lastname` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `names`
+--
+
+LOCK TABLES `names` WRITE;
+/*!40000 ALTER TABLE `names` DISABLE KEYS */;
+INSERT INTO `names` VALUES (1,'Nick','Berilov'),(2,'Kappa','Keepo'),(3,'Kek','Lel'),(5,'Pohx','Kappa'),(7,'test','test'),(8,'test','test');
+/*!40000 ALTER TABLE `names` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `phones`
+--
+
+DROP TABLE IF EXISTS `phones`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `phones` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `phone` varchar(25) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `phones`
+--
+
+LOCK TABLES `phones` WRITE;
+/*!40000 ALTER TABLE `phones` DISABLE KEYS */;
+INSERT INTO `phones` VALUES (1,'321'),(2,'123'),(3,'5-800-MEGALUL'),(4,'123'),(5,'+375293065135'),(6,'123456'),(8,'test'),(9,'test');
+/*!40000 ALTER TABLE `phones` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -176,10 +294,11 @@ CREATE TABLE `procedures` (
   `details` text,
   `date` date NOT NULL,
   `employeeId` int(11) NOT NULL,
+  `price` double DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `fkEmployeeID_idx` (`employeeId`),
   CONSTRAINT `fkEmployeeID` FOREIGN KEY (`employeeId`) REFERENCES `employees` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,6 +307,7 @@ CREATE TABLE `procedures` (
 
 LOCK TABLES `procedures` WRITE;
 /*!40000 ALTER TABLE `procedures` DISABLE KEYS */;
+INSERT INTO `procedures` VALUES (1,3,'Did something pricy','2016-12-11',4,123),(2,3,'Another costly procedure','2016-12-12',4,150),(3,2,'TEST','2017-05-08',1,777);
 /*!40000 ALTER TABLE `procedures` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,8 +332,33 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('8zi19JXXIPvCZw0bb4t6To2aD03m51DF','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('ByUrn-l9WaSN2kIldsmA6LkIjlmS8nX7','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('Fs7CbL02ugWz34l95-krgBbEI2pnEwku','{\"cookie\":{\"originalMaxAge\":false,\"expires\":false,\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"id\":1,\"type\":\"client\"}}}',0),('gJT5j1vuhSacmdoHmiRlQCYhegbxOVxJ','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('hmgpbeNgfALV6JLsRg_UOverqZzZv72k','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('IkUn52UDey4Savdyi5BvhBwEj3WICPg3','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('Ll02KmZDn759h2SWXq_7Hdl_hpUNjOqw','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('MZqRWDnqr9XHJA3ysG-cRpuwhvr8ClCT','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('osFKhsI8ffW18HWYxy6ANj8kbEhxT1Uo','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('QrK9ZRsh2heWyX6f6xcYQQI2sAJV7Qn4','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('WYo3Z1LUXhyWBvr_8kzsPTSSMHEcwOde','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('XMETL4HeIMzqxLBh04UQ8T5zTnJZjlm2','{\"cookie\":{\"originalMaxAge\":false,\"expires\":false,\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"id\":1,\"type\":\"admin\"}}}',0),('z-7p1d9RrMQYFfqAHlj1rC8X1FOFUVrR','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0),('zzE_tQ0d3IxEWDztTQvfN6tMFuDhB0NL','{\"cookie\":{\"originalMaxAge\":null,\"expires\":null,\"httpOnly\":true,\"path\":\"/\"}}',0);
+INSERT INTO `sessions` VALUES ('EMsIRYALOBiCsU-5WcF_xRJLHzylLz35','{\"cookie\":{\"originalMaxAge\":604800000,\"expires\":\"2017-05-16T08:26:30.687Z\",\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"id\":4,\"type\":\"client\"}}}',1494923191),('jMyRAD8LuFgWsTRzmvCSQ_wTBoK1uzVt','{\"cookie\":{\"originalMaxAge\":604799998,\"expires\":\"2017-05-22T15:38:33.823Z\",\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"id\":1,\"type\":\"admin\"}}}',1495467514),('TbAUK3EVSJ4IhQSDBTSXTDISwEZPdb0t','{\"cookie\":{\"originalMaxAge\":false,\"expires\":false,\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"id\":1,\"type\":\"admin\"}}}',0),('X8iba52-_60ATK2qgE3BE59J0fM24yfZ','{\"cookie\":{\"originalMaxAge\":604799999,\"expires\":\"2017-05-21T07:10:53.665Z\",\"httpOnly\":true,\"path\":\"/\"},\"passport\":{\"user\":{\"id\":1,\"type\":\"admin\"}}}',1495350654);
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `status_type`
+--
+
+DROP TABLE IF EXISTS `status_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `status_type` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `status` varchar(25) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `status_type`
+--
+
+LOCK TABLES `status_type` WRITE;
+/*!40000 ALTER TABLE `status_type` DISABLE KEYS */;
+INSERT INTO `status_type` VALUES (1,'in progress'),(2,'successful'),(3,'failed');
+/*!40000 ALTER TABLE `status_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -244,6 +389,102 @@ DELIMITER ;
 --
 -- Dumping routines for database 'advocacy'
 --
+/*!50003 DROP FUNCTION IF EXISTS `CreateClient` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `CreateClient`(
+	email varchar(255), 
+    password varchar(255), 
+    firstname varchar(45), 
+    lastname varchar(45),
+    address varchar(45),
+    phone varchar(25),
+    birthday date
+) RETURNS int(11)
+BEGIN
+	
+    DECLARE emailId int;
+    DECLARE nameId int;
+    DECLARE addressId int;
+    DECLARE phoneId int;
+    
+    INSERT INTO emails (email) VALUES (email);
+    SET emailId = LAST_INSERT_ID();
+    
+    INSERT INTO names (firstname, lastname) VALUES (firstname, lastname);
+    SET nameId = LAST_INSERT_ID();
+    
+    INSERT INTO addresses (address) VALUES (address);
+    SET addressId = LAST_INSERT_ID();
+    
+    INSERT INTO phones (phone) VALUES (phone);
+    SET phoneId = LAST_INSERT_ID();
+    
+    INSERT INTO clients (emailId, password, nameId, addressId, phoneId, birthday)
+    VALUES (emailId, password, nameId, addressId, phoneId, birthday);
+    
+RETURN LAST_INSERT_ID();
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP FUNCTION IF EXISTS `CreateEmployee` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `CreateEmployee`(
+	email varchar(255), 
+    password varchar(255), 
+    firstname varchar(45), 
+    lastname varchar(45),
+    address varchar(45),
+    phone varchar(25),
+    birthday date
+) RETURNS int(11)
+BEGIN
+	
+    DECLARE emailId int;
+    DECLARE nameId int;
+    DECLARE addressId int;
+    DECLARE phoneId int;
+    
+    INSERT INTO emails (email) VALUES (email);
+    SET emailId = LAST_INSERT_ID();
+    
+    INSERT INTO names (firstname, lastname) VALUES (firstname, lastname);
+    SET nameId = LAST_INSERT_ID();
+    
+    INSERT INTO addresses (address) VALUES (address);
+    SET addressId = LAST_INSERT_ID();
+    
+    INSERT INTO phones (phone) VALUES (phone);
+    SET phoneId = LAST_INSERT_ID();
+    
+    INSERT INTO employees (emailId, password, nameId, addressId, phoneId, birthday)
+    VALUES (emailId, password, nameId, addressId, phoneId, birthday);
+    
+RETURN LAST_INSERT_ID();
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -254,4 +495,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2016-12-09 17:12:07
+-- Dump completed on 2017-05-19 19:50:29
